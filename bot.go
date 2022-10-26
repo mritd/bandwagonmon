@@ -59,10 +59,16 @@ func (b *Bot) Init() {
 	}
 	tb.Use(middleware.AutoRespond())
 	tb.Handle("/info", func(c telebot.Context) error {
-		_, err := b.bot.Reply(c.Message(), b.buildMsg(), &telebot.SendOptions{ParseMode: telebot.ModeMarkdownV2})
+		m, err := b.bot.Reply(c.Message(), "正在查询, 请稍后...")
 		if err != nil {
 			logrus.Errorf("failed to send msg: %v", err)
 		}
+
+		_, err = b.bot.Edit(m, b.buildMsg(), &telebot.SendOptions{ParseMode: telebot.ModeMarkdownV2})
+		if err != nil {
+			logrus.Errorf("failed to send msg: %v", err)
+		}
+
 		return nil
 	})
 	go tb.Start()
