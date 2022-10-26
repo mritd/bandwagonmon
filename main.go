@@ -12,16 +12,18 @@ import (
 	"syscall"
 )
 
+var commit string
 var crontab string
 var bot Bot
 
 var rootCmd = &cobra.Command{
 	Use: "bandwagonmon",
 	Run: func(cmd *cobra.Command, args []string) {
-		logrus.Info("init telegram bot client...")
+		logrus.Infof("搬瓦工机器人启动, Git Commit: %s", commit)
+		logrus.Info("初始化 Telegram 机器人...")
 		bot.Init()
 
-		logrus.Info("create cron job...")
+		logrus.Info("创建定时推送任务...")
 		c := cron.New()
 		_, err := c.AddFunc(crontab, bot.Send)
 		if err != nil {
@@ -29,19 +31,19 @@ var rootCmd = &cobra.Command{
 		}
 		c.Start()
 
-		logrus.Info("bandwagonmon started...")
+		logrus.Info("搬瓦工机器人启动成功...")
 
 		ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 		defer cancel()
 		<-ctx.Done()
 
 		c.Stop()
-		logrus.Info("cron job shutdown...")
+		logrus.Info("关闭定时任务...")
 
 		bot.Stop()
-		logrus.Info("telegram bot shutdown...")
+		logrus.Info("关闭 Telegram 机器人...")
 
-		logrus.Info("bandwagonmon stop!")
+		logrus.Info("搬瓦工机器人已停止!")
 	},
 }
 

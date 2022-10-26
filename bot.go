@@ -59,6 +59,7 @@ func (b *Bot) Init() {
 	}
 	tb.Use(middleware.AutoRespond())
 	tb.Handle("/info", func(c telebot.Context) error {
+		logrus.Infof("接收到 [%s] 查询指令...", c.Recipient())
 		m, err := b.bot.Reply(c.Message(), "正在查询, 请稍后...")
 		if err != nil {
 			logrus.Errorf("failed to send msg: %v", err)
