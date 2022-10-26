@@ -5,6 +5,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"
+	"gopkg.in/telebot.v3/middleware"
 	"strings"
 	"time"
 )
@@ -56,13 +57,17 @@ func (b *Bot) Init() {
 	if err != nil {
 		logrus.Fatalf("failed to create telegram bot client: %v", err)
 	}
+	tb.Use(middleware.AutoRespond())
+	tb.Handle("/info", func(c telebot.Context) error {
+		_, err := b.bot.Reply(c.Message(), b.buildMsg(), &telebot.SendOptions{ParseMode: telebot.ModeMarkdownV2})
+		if err != nil {
+			logrus.Errorf("failed to send msg: %v", err)
+		}
+		return nil
+	})
+	go tb.Start()
 
 	b.bot = tb
-
-	b.bot.Handle("/query", func(ctx telebot.Context) error {
-		_, err := b.bot.Send(ctx.Sender(), b.buildMsg(), &telebot.SendOptions{ParseMode: telebot.ModeMarkdownV2})
-		return err
-	})
 }
 
 func (b *Bot) Stop() {
