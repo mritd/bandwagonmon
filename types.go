@@ -1,5 +1,7 @@
 package main
 
+import "gopkg.in/telebot.v3"
+
 type VPSInfo struct {
 	NodeDatacenter   string `json:"node_datacenter,omitempty"`
 	VeStatus         string `json:"ve_status,omitempty"`
@@ -8,4 +10,12 @@ type VPSInfo struct {
 	PlanMonthlyData  int64  `json:"plan_monthly_data,omitempty"`
 	DataCounter      int64  `json:"data_counter,omitempty"`
 	DataNextReset    int64  `json:"data_next_reset,omitempty"`
+}
+
+type Bot struct {
+	Token      string
+	ChartIds   []int64
+	VeIDApiKey []string
+
+	bot *telebot.Bot
 }
