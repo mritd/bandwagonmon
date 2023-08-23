@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+
+	_ "github.com/mritd/logrus"
 )
 
 var commit string
@@ -37,11 +39,11 @@ var rootCmd = &cobra.Command{
 		defer cancel()
 		<-ctx.Done()
 
-		c.Stop()
 		logrus.Info("关闭定时任务...")
+		c.Stop()
 
-		bot.Stop()
 		logrus.Info("关闭 Telegram 机器人...")
+		bot.Stop()
 
 		logrus.Info("搬瓦工机器人已停止!")
 	},
@@ -54,13 +56,6 @@ func main() {
 }
 
 func init() {
-	logrus.SetLevel(logrus.InfoLevel)
-	logrus.SetFormatter(&logrus.TextFormatter{
-		FullTimestamp:   true,
-		ForceColors:     true,
-		TimestampFormat: "2006-01-02 15:04:05",
-	})
-
 	// CRON_TZ=Asia/Shanghai 30 12 * * *
 	rootCmd.PersistentFlags().StringVar(&crontab, "crontab", os.Getenv("CRONTAB"), "Task Execution Crontab")
 	rootCmd.PersistentFlags().StringVar(&bot.Token, "telegram-bot-token", os.Getenv("TELEGRAM_BOT_TOKEN"), "Telegram Bot Token")
