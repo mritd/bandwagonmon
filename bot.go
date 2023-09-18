@@ -42,7 +42,7 @@ func (b *Bot) buildMsg() string {
 func (b *Bot) Send() {
 	msg := b.buildMsg()
 	for _, id := range b.ChartIds {
-		_, err := b.bot.Send(telebot.ChatID(id), msg, &telebot.SendOptions{ParseMode: telebot.ModeMarkdownV2})
+		_, err := b.bot.Send(telebot.ChatID(id), msg, &telebot.SendOptions{ParseMode: telebot.ModeMarkdownV2, DisableNotification: true})
 		if err != nil {
 			logrus.Errorf("failed to send notifaction message: %v", err)
 		}
